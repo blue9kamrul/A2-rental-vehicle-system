@@ -15,11 +15,13 @@ app.use(express.json());
 initDB();
 
 //auth routes
-app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/auth", authRoutes);
 
 //vehicles routes
 app.use("/api/v1/vehicles", vehicleRoutes);
+
+//users routes -
+app.use("/api/v1/users", userRoutes);
 
 // root route for testing if server is working
 app.get("/", (req: Request, res: Response) => {
