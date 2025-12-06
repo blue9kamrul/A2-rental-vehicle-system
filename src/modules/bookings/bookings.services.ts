@@ -115,6 +115,23 @@ const updateBooking = async (
 
   const booking = bookingResult.rows[0];
 
+  // auto return
+  const currentDate = new Date();
+  const endDate = new Date(booking.rent_end_date);
+
+  if (currentDate > endDate && booking.status === "active") {
+    // Automatically mark as returned if period has ended
+    const updatedBooking = await pool.query(
+      `UPDATE bookings SET status = 'returned' WHERE id = $1 RETURNING *`,
+      [bookingId]
+    );
+  }
+
+  await pool.query(
+    `UPDATE vehicles SET availability_status = 'available' WHERE id = $1`,
+    [booking.vehicle_id]
+  );
+
   // Customer can only cancel their own bookings
   if (userRole === "customer") {
     if (booking.customer_id !== userId) {
