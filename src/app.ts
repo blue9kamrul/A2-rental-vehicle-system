@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 import initDB from "./config/db";
+import userRoutes from "./modules/users/user.routes";
+import authRoutes from "./modules/auth/auth.routes";
 
 // creating instance of express app
 const app = express();
@@ -9,6 +11,10 @@ app.use(express.json());
 
 // initializing DB
 initDB();
+
+//auth routes
+app.use("/api/v1/auth", userRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 // root route for testing if server is working
 app.get("/", (req: Request, res: Response) => {
