@@ -13,18 +13,18 @@ const getAllUsers = async () => {
 const updateUsers = async (
   userId: string,
   userData: { name?: string; email?: string; phone?: string; role?: string },
-  requestingUserRole: string
+  userRole: string
 ) => {
   const { name, email, phone, role } = userData;
 
-  // If customer tries to update role, return error
-  if (requestingUserRole !== "admin" && role !== undefined) {
+  // if customer wants to update role, deny
+  if (userRole !== "admin" && role) {
     return { error: "Only admins can update user roles" };
   }
 
   let result;
 
-  if (requestingUserRole === "admin") {
+  if (userRole === "admin") {
     // Admin can update everything including role
     result = await pool.query(
       `UPDATE users 
@@ -54,6 +54,17 @@ const updateUsers = async (
 
 // delete user - admin only
 const deleteUser = async (userId: string) => {
+  const activeBookings = await pool.query(
+    `SELECT * FROM bookings 
+       WHERE user_id = $1 
+       AND status IN ('active')`,
+    [userId]
+  );
+
+  if (activeBookings.rows.length > 0) {
+    return { error: "Cannot delete user with active bookings" };
+  }
+
   const result = await pool.query(
     "DELETE FROM users WHERE id = $1 RETURNING id, name, email, phone, role",
     [userId]

@@ -108,6 +108,12 @@ const deleteVehicle = async (req: Request, res: Response) => {
         message: "Vehicle not found or booked, So can not delete",
       });
     }
+    if ((result as any).error) {
+      return res.status(403).json({
+        success: false,
+        message: (result as any).error,
+      });
+    }
     res.status(200).json({
       success: true,
       message: "Vehicle deleted successfully",

@@ -23,18 +23,20 @@ const getAllUsers = async (req: Request, res: Response) => {
 const updateUser = async (req: Request, res: Response) => {
   try {
     const userId = req.params.userId;
-    const requestingUserRole = req.user?.role;
+    const userRole = req.user?.role;
 
-    const result = await userServices.updateUsers(
-      userId!,
-      req.body,
-      requestingUserRole
-    );
+    const result = await userServices.updateUsers(userId!, req.body, userRole);
 
     if (!result) {
       return res.status(404).json({
         success: false,
         message: "User not found",
+      });
+    }
+    if ((result as any).error) {
+      return res.status(403).json({
+        success: false,
+        message: (result as any).error,
       });
     }
     res.status(200).json({
@@ -63,10 +65,15 @@ const deleteUser = async (req: Request, res: Response) => {
         message: "User not found",
       });
     }
+    if ((result as any).error) {
+      return res.status(403).json({
+        success: false,
+        message: (result as any).error,
+      });
+    }
     res.status(200).json({
       success: true,
       message: "User deleted successfully",
-      data: result,
     });
   } catch (error: any) {
     res.status(500).json({
