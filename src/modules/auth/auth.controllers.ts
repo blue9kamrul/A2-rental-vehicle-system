@@ -5,6 +5,12 @@ import authServices from "./auth.services";
 const createUser = async (req: Request, res: Response) => {
   try {
     const result = await authServices.createUser(req.body);
+    if ("error" in result) {
+      return res.status(400).json({
+        success: false,
+        message: result.error,
+      });
+    }
     res.status(201).json({
       success: true,
       message: "User registered successfully",
@@ -23,6 +29,13 @@ const createUser = async (req: Request, res: Response) => {
 const signinUser = async (req: Request, res: Response) => {
   try {
     const result = await authServices.signinUser(req.body);
+    if ("error" in result) {
+      return res.status(400).json({
+        success: false,
+        message: result.error,
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: "Login successful",

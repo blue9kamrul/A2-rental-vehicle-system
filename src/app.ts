@@ -29,7 +29,7 @@ app.use("/api/v1/bookings", bookingRoutes);
 
 // root route for testing if server is working
 app.get("/", (req: Request, res: Response) => {
-  res.send("server started");
+  res.send("server started For RENTAL VEHICLE SYSTEM");
 });
 
 // for invalid route

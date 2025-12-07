@@ -6,7 +6,7 @@ A backend App for a vehicle rental platform with role based API and AUTH Middlew
 
 ## 🔗 Live Deployment
 
-**Base URL:** []()
+**Base URL:** [https://rental-vehicle-api.vercel.app/](https://rental-vehicle-api.vercel.app/)
 
 ---
 
@@ -37,12 +37,12 @@ A backend App for a vehicle rental platform with role based API and AUTH Middlew
 
 ### 🚙 Vehicle Management
 
-- CRUD operations for vehicle inventory.
+- CRUD operations for vehicle inventory with auth middleware for safety.
 - Availability tracking (available vs booked).
 
 ### 📅 Booking System (Transactional)
 
-- **Basic:** can create, update, see the bookings done.
+- **Basic:** can create, update, see the bookings done with role based.
 - **Logic:** Prevents double-booking and validates start/end dates.
 - **Pricing:** Total price calculation based on rental duration.
 
@@ -97,6 +97,8 @@ http://localhost:5000/api/v1
 
 ### Github Repository
 
-## [click here](https://github.com/blue9kamrul/A2-rental-vehicle-system)
+# [click here](https://github.com/blue9kamrul/A2-rental-vehicle-system)
 
 ### Live deployment
+
+# [click here](https://rental-vehicle-api.vercel.app/)

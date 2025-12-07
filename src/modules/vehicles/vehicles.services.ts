@@ -83,7 +83,7 @@ const updateVehicle = async (
 const deleteVehicle = async (vehicleId: string) => {
   const activeBookings = await pool.query(
     `SELECT * FROM bookings 
-       WHERE user_id = $1 
+       WHERE vehicle_id = $1 
        AND status IN ('active')`,
     [vehicleId]
   );

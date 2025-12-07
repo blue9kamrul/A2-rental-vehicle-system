@@ -13,15 +13,19 @@ const getAllUsers = async () => {
 const updateUsers = async (
   userId: string,
   userData: { name?: string; email?: string; phone?: string; role?: string },
-  userRole: string
+  userRole: string,
+  userIdFromToken: number
 ) => {
   const { name, email, phone, role } = userData;
 
-  // if customer wants to update role, deny
-  if (userRole !== "admin" && role) {
+  // customer can update their own profile
+  if (userRole === "customer" && Number(userId) !== userIdFromToken) {
+    return { error: "Customers can only update their own profile" };
+  }
+  // Customer cannot update role
+  if (userRole === "customer" && role) {
     return { error: "Only admins can update user roles" };
   }
-
   let result;
   if (userRole === "admin") {
     // Admin can update everything including role
@@ -55,7 +59,7 @@ const updateUsers = async (
 const deleteUser = async (userId: string) => {
   const activeBookings = await pool.query(
     `SELECT * FROM bookings 
-       WHERE user_id = $1 
+       WHERE customer_id = $1 
        AND status IN ('active')`,
     [userId]
   );

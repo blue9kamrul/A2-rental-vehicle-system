@@ -2,7 +2,19 @@ import { pool } from "../../config/db";
 
 // create booking
 const createBooking = async (payload: Record<string, any>) => {
-  const { customer_id, vehicle_id, rent_start_date, rent_end_date } = payload;
+  const {
+    customer_id,
+    vehicle_id,
+    rent_start_date,
+    rent_end_date,
+    userId,
+    userRole,
+  } = payload;
+
+  if (userRole === "customer" && customer_id !== userId) {
+    return { error: "You can only create bookings for yourself" };
+  }
+
   // selecting the vehicle
   const vehicleResult = await pool.query(
     `SELECT id, daily_rent_price, vehicle_name, availability_status 
@@ -86,7 +98,7 @@ const getBookings = async (payload: Record<string, any>) => {
     bookings = result.rows;
   }
 
-  // Add customer and vehicle info to each booking
+  // Auto returned bookings when past end date
   const currentDate = new Date();
   for (let booking of bookings) {
     const endDate = new Date(booking.rent_end_date);
@@ -106,19 +118,25 @@ const getBookings = async (payload: Record<string, any>) => {
       booking.status = "returned";
     }
 
-    // Add customer info
-    const customerResult = await pool.query(
-      "SELECT name, email FROM users WHERE id = $1",
-      [booking.customer_id]
-    );
-    booking.customer = customerResult.rows[0];
-
+    // Add customer info for admin view
+    if (role === "admin") {
+      const customerResult = await pool.query(
+        "SELECT name, email FROM users WHERE id = $1",
+        [booking.customer_id]
+      );
+      booking.customer = customerResult.rows[0];
+    }
     // Get vehicle info
     const vehicleResult = await pool.query(
-      "SELECT vehicle_name, registration_number FROM vehicles WHERE id = $1",
+      "SELECT vehicle_name, registration_number,type FROM vehicles WHERE id = $1",
       [booking.vehicle_id]
     );
+
     booking.vehicle = vehicleResult.rows[0];
+
+    if (role === "admin") {
+      delete booking.vehicle.type;
+    }
   }
 
   return bookings;
@@ -149,6 +167,11 @@ const updateBooking = async (
   // Customer can only cancel before start date
   const startDate = new Date(booking.rent_start_date);
   if (userRole === "customer" && status === "cancelled") {
+    // customer can cancel only their own bookings
+    if (booking.customer_id !== userId) {
+      return { error: "You can only cancel your own bookings" };
+    }
+
     if (currentDate >= startDate) {
       return {
         error: "Cannot cancel booking after rental period has started",
@@ -194,6 +217,10 @@ const updateBooking = async (
       const updatedBooking = await pool.query(
         `UPDATE bookings SET status = $1 WHERE id = $2 RETURNING *`,
         [status, bookingId]
+      );
+      await pool.query(
+        `UPDATE vehicles SET availability_status = 'available' WHERE id = $1`,
+        [booking.vehicle_id]
       );
       return updatedBooking.rows[0];
     }
