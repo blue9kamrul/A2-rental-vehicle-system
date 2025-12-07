@@ -5,6 +5,13 @@ import { bookingServices } from "./bookings.services";
 const createBooking = async (req: Request, res: Response) => {
   try {
     const result = await bookingServices.createBooking(req.body);
+    if (result.error) {
+      return res.status(400).json({
+        success: false,
+        message: result.error,
+      });
+    }
+
     res.status(201).json({
       success: true,
       message: "Booking created successfully",
@@ -57,17 +64,16 @@ const updateBooking = async (req: Request, res: Response) => {
         message: result.error,
       });
     }
-
-    // let message = "Booking updated successfully";
-    // if (req.body.status === "cancelled") {
-    //   message = "Booking cancelled successfully";
-    // } else if (req.body.status === "returned") {
-    //   message = "Booking marked as returned. Vehicle is now available";
-    // }
+    let message = "Booking updated successfully";
+    if (req.body.status === "cancelled") {
+      message = "Booking cancelled successfully";
+    } else if (req.body.status === "returned") {
+      message = "Booking marked as returned. Vehicle is now available";
+    }
 
     res.status(200).json({
       success: true,
-      message: "Booking updated successfully",
+      message: message,
       data: result,
     });
   } catch (error: any) {

@@ -23,7 +23,6 @@ const updateUsers = async (
   }
 
   let result;
-
   if (userRole === "admin") {
     // Admin can update everything including role
     result = await pool.query(
