@@ -2,12 +2,14 @@ import { pool } from "../../config/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import config from "../../config";
-import { REPLCommand } from "repl";
 
 //creating new user
 const createUser = async (payload: Record<string, unknown>) => {
   const { name, email, password, phone, role } = payload;
 
+  if (typeof password !== "string" || password.length < 6) {
+    return { error: "Password must be at least 6 characters long" };
+  }
   const hashedPassword = await bcrypt.hash(password as string, 10);
   const result = await pool.query(
     `INSERT INTO users (name, email, password, phone, role) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
