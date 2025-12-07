@@ -64,9 +64,9 @@ cd A2-rental-vehicle-system
 ### 2. Environment variables
 
 ```bash
-CONNECTION_STR = postgresql://neondb_owner:npg_E6O1DFQLMBro@ep-dry-term-a8osgu2c-pooler.eastus2.azure.neon.tech/neondb?sslmode=require&channel_binding=require
+CONNECTION_STR = Connection string for neonDB
 PORT = 5000
-JWT_SECRET = KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+JWT_SECRET = Your secret key
 ```
 
 ---
