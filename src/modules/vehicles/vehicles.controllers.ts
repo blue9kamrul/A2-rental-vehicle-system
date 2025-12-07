@@ -85,7 +85,7 @@ const updateVehicle = async (req: Request, res: Response) => {
       res.status(200).json({
         success: true,
         message: "Vehicle updated successfully",
-        data: result,
+        data: result[0],
       });
     }
   } catch (error: any) {
@@ -105,13 +105,12 @@ const deleteVehicle = async (req: Request, res: Response) => {
     if (!result) {
       return res.status(404).json({
         success: false,
-        message: "Vehicle not found",
+        message: "Vehicle not found or booked, So can not delete",
       });
     }
     res.status(200).json({
       success: true,
       message: "Vehicle deleted successfully",
-      data: result,
     });
   } catch (error: any) {
     res.status(500).json({

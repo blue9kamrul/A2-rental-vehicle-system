@@ -37,6 +37,7 @@ const signinUser = async (req: Request, res: Response) => {
   }
 };
 
+//exports
 const authController = {
   createUser,
   signinUser,

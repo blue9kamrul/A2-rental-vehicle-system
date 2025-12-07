@@ -1,15 +1,7 @@
 import { pool } from "../../config/db";
 
-interface CreateVehiclePayload {
-  vehicle_name: string;
-  type: string;
-  registration_number: string;
-  daily_rent_price: number;
-  availability_status?: string;
-}
-
 // ceating new vehicle
-const createVehicle = async (payload: CreateVehiclePayload) => {
+const createVehicle = async (payload: Record<string, unknown>) => {
   const {
     vehicle_name,
     type,
@@ -84,15 +76,16 @@ const updateVehicle = async (
       vehicleId,
     ]
   );
-  return result.rows[0];
+  return result.rows;
 };
 
 //delete vehicle
 const deleteVehicle = async (vehicleId: string) => {
   const result = await pool.query(
-    "DELETE FROM vehicles WHERE id = $1 RETURNING *",
+    "DELETE FROM vehicles WHERE id = $1 AND availability_status = 'available' RETURNING *",
     [vehicleId]
   );
+
   return result.rows[0];
 };
 

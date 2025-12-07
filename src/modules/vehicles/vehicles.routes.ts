@@ -7,15 +7,11 @@ const router = Router();
 //create vehicle - only admin
 router.post("/", auth("admin"), vehicleController.createVehicle);
 
-//get all vehicles - all roles
-router.get("/", auth("admin", "customer"), vehicleController.getVehicle);
+//get all vehicles everyone
+router.get("/", vehicleController.getVehicle);
 
 // get vehicle by id - all roles
-router.get(
-  "/:vehicleId",
-  auth("admin", "customer"),
-  vehicleController.getSingleVehicle
-);
+router.get("/:vehicleId", vehicleController.getSingleVehicle);
 
 // updating vehicles - only admin
 router.put("/:vehicleId", auth("admin"), vehicleController.updateVehicle);

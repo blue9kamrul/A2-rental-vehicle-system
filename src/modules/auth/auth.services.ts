@@ -46,6 +46,7 @@ const signinUser = async (Payload: Record<string, unknown>) => {
   return { token, user };
 };
 
+//exports
 const authServices = {
   createUser,
   signinUser,
